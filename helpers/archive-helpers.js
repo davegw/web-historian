@@ -60,8 +60,16 @@ exports.addUrlToList = function(){
   // Adjust sites.txt AND sitesObj
 };
 
-exports.isUrlArchived = function(){
+exports.isUrlArchived = function(archiveUrl, callback){
   // Check if URL is Archived.
+  fs.open((exports.paths.archivedSites + '/' + archiveUrl), 'r', function(err, fd) {
+    if (err) {
+      callback(false);
+    }
+    else {
+      callback(true);
+    }
+  });
 };
 
 exports.downloadUrls = function(){

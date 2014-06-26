@@ -17,7 +17,18 @@ exports.handleRequest = function (req, res) {
         // Callback function passed to isUrlInList below.
         var isUrlInListCallback = function(wasFound) {
           if (wasFound) {
-            httpHelpers.serveAssets(res, (archive.paths.archivedSites + '/' + postData));
+            // We have found the post URL in our list. Now check if it's in our directory.
+            archive.isUrlArchived(postData, function(isArchived) {
+              if (isArchived) {
+                httpHelpers.serveAssets(res, (archive.paths.archivedSites + '/' + postData));
+              }
+              else {
+                httpHelpers.serveAssets(res, dirRoot + '/loading.html');
+              }
+            });
+              // If it is serve the html.
+              //else
+                //Go to loading.
           }
           else {
             httpHelpers.serveAssets(res, dirRoot + '/loading.html');
