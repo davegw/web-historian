@@ -14,21 +14,20 @@ exports.handleRequest = function (req, res) {
       httpHelpers.serveAssets(res, dirRoot + '/index.html');
     } else if (req.method === 'POST') {
       httpHelpers.collectData(req, function(postData) {
-        //Check if url is in file -- Expect true/false result.
-        console.log(archive.isUrlInList(postData));
-        if (archive.isUrlInList(postData)) {
-          // If url in file check if the page is cached
-          // if (archive.isUrlArchived(postData)) {
-
-            // return the cached page
+        // Callback function passed to isUrlInList below.
+        var isUrlInListCallback = function(wasFound) {
+          if (wasFound) {
             httpHelpers.serveAssets(res, (archive.paths.archivedSites + '/' + postData));
-          // }
-          // If url in file and page NOT cached
-            // Show loading page
-        }
-        else {
-          console.log('sadness');
-        }
+          }
+          else {
+            httpHelpers.serveAssets(res, dirRoot + '/loading.html');
+          }
+        };
+        archive.isUrlInList(postData, isUrlInListCallback);
+
+        // else {
+        //   console.log('sadness');
+        // }
         // If url not in file
           // Add url to file
           // Show loading page/
@@ -40,7 +39,6 @@ exports.handleRequest = function (req, res) {
         // });
 
       });
-      httpHelpers.serveAssets(res, dirRoot + '/loading.html');
     }
   } else if (req.url === '/styles.css') {
     httpHelpers.serveAssets(res, dirRoot + '/styles.css');
