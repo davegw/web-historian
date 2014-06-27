@@ -20,10 +20,10 @@ exports.handleRequest = function (req, res) {
             // We have found the post URL in our list. Now check if it's in our directory.
             archive.isUrlArchived(postData, function(isArchived) {
               if (isArchived) {
-                httpHelpers.serveAssets(res, (archive.paths.archivedSites + '/' + postData));
+                httpHelpers.redirectAssets(res, (archive.paths.archivedSites + '/' + postData), postData);
               }
               else {
-                httpHelpers.serveAssets(res, dirRoot + '/loading.html');
+                redirectToLoading(res);
               }
             });
           }
@@ -31,9 +31,9 @@ exports.handleRequest = function (req, res) {
           else {
             archive.addUrlToList(postData, function(success){
               if (success) {
-                httpHelpers.serveAssets(res, dirRoot + '/loading.html');
+                redirectToLoading(res);
               } else {
-                httpHelpers.serveAssets(res, dirRoot + '/loading.html');
+                redirectToLoading(res);
               }
             });
           }
@@ -43,9 +43,23 @@ exports.handleRequest = function (req, res) {
     }
   } else if (req.url === '/styles.css') {
     httpHelpers.serveAssets(res, dirRoot + '/styles.css');
+  } else if (req.url === '/loading.html') {
+    httpHelpers.serveAssets(res, dirRoot + '/loading.html');
   }
   else {
-    res.writeHead(404);
-    res.end('Not Found :(');
+    var url = req.url.substring(1); // Get rid of leading slash
+    archive.isUrlArchived(url, function(isArchived) {
+      if (isArchived) {
+        httpHelpers.serveAssets(res, (archive.paths.archivedSites + '/' + url));
+      }
+      else {
+        res.writeHead(404);
+        res.end('Not Found :(');
+      }
+    });
   }
+};
+
+var redirectToLoading = function(res){
+  httpHelpers.redirectAssets(res, dirRoot + '/loading.html', 'loading.html');
 };

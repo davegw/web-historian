@@ -29,6 +29,21 @@ var serveAssets = function(res, asset) {
   });
 };
 
+var redirectAssets = function(res, asset, url) {
+  fs.readFile(asset, function(err, data) {
+    if (err) {
+      res.writeHead(500);
+      res.end();
+      return;
+    }
+
+    var redirectHeaders = Object.create(headers);
+    redirectHeaders['Location'] = url;
+    res.writeHead(302, redirectHeaders);
+    res.end(data);
+  });
+};
+
 var collectData = function(req, callback) {
   var data = '';
   req.on('data', function(chunk) {
@@ -40,6 +55,7 @@ var collectData = function(req, callback) {
   });
 };
 
+exports.redirectAssets = redirectAssets;
 exports.serveAssets = serveAssets;
 exports.collectData = collectData;
 
