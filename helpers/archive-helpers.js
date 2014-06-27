@@ -25,19 +25,15 @@ exports.initialize = function(pathsObj){
   });
 };
 
-// The following function names are provided to you to suggest how you might
-// modularize your code. Keep it clean!
+// Read file of URL lists and executes callback once done.
 exports.readListOfUrls = function(callback){
-  // if urlList is empty or if sites.txt has changed since last load, then re-load
-
   // Check if sitesObj is empty and populate from file.
   if (Object.keys(sitesObj).length === 0) {
-    fs.readFile(exports.paths.list, {encoding: 'utf8'}, function(err, sites){
+    fs.readFile(exports.paths.list, {encoding: 'utf8'}, function(err, sites) {
+      // Create an array of site URLs.
       sites = sites.split('\n');
       for (var i = 0; i < sites.length; i++) {
-        if (sites[i].length > 0) {
-          sitesObj[sites[i]] = true;
-        }
+        if (sites[i].length > 0) { sitesObj[sites[i]] = true; }
       }
       callback();
     });
@@ -46,38 +42,37 @@ exports.readListOfUrls = function(callback){
   }
 };
 
-exports.isUrlInList = function(searchUrl, handleRequestCallback){
-  // Read sites file
+// Check if searchURL is in file list and execute callback with true or false argument.
+exports.isUrlInList = function(searchUrl, callback){
   exports.readListOfUrls(function() {
     var wasFound = (sitesObj[searchUrl] === true);
-    handleRequestCallback(wasFound);
+    callback(wasFound);
   });
 };
 
+// Writes URL to list and upon completion executes a callback with a success argument.
 exports.addUrlToList = function(writeUrl, callback){
-  // Adjust sites.txt AND sitesObj
   fs.appendFile(exports.paths.list, (writeUrl + '\n'), {encoding: 'utf8'}, function(err){
-    if (!err) {
-      sitesObj[writeUrl] = true;
-    }
+    if (!err) { sitesObj[writeUrl] = true; }
     callback(!err);
   });
 };
 
+// Check if URL is Archived and upon completion executes a callback with a success argument and the archived URL.
 exports.isUrlArchived = function(archiveUrl, callback){
-  // Check if URL is Archived.
   fs.open((exports.paths.archivedSites + '/' + archiveUrl), 'r', function(err, fd) {
     callback(!err, archiveUrl);
   });
 };
 
+// Find list of sites that are in sites.txt but are not yet archived and scrapes the site data into a new file.
 exports.downloadUrls = function(){
-  // Find list of sites that are in sites.txt but are not yet archived.
   exports.readListOfUrls(function() {
     var listUrls = Object.keys(sitesObj);
     for (var i = 0; i < listUrls.length; i++) {
       exports.isUrlArchived(listUrls[i], function(success, url) {
         if (!success) {
+          // Call worker/htmlfetcher.js method to scape url data and create a new file in archives/sites directory.
           fetchHelper.fetchHTML(url);
         }
       });

@@ -3,14 +3,12 @@ var archive = require('../helpers/archive-helpers');
 var httpHelpers = require('./http-helpers.js');
 var fetchHelper = require('../workers/htmlfetcher.js');
 
-var dirRoot = '/Users/student/Code/daviddavid/2014-06-web-historian/web/public';
-
-// require more modules/folders here!
+var dirRoot = '/Users/davegertmenian-wong/railsworkspace/hackreactor/sprints/2014-06-web-historian/web/public';
 
 exports.handleRequest = function (req, res) {
   console.log(req.method + ' ' + req.url);
 
-  if (req.url === '/' || req.url === '/index.html') {
+  if (req.url === '/' || req.url === '/index.html' || (req.url === '/loading.html' && req.method === 'POST')) {
     if (req.method === 'GET') {
       httpHelpers.serveAssets(res, dirRoot + '/index.html');
     } else if (req.method === 'POST') {
@@ -54,8 +52,7 @@ exports.handleRequest = function (req, res) {
         httpHelpers.serveAssets(res, (archive.paths.archivedSites + '/' + url));
       }
       else {
-        res.writeHead(404);
-        res.end('Not Found :(');
+        httpHelpers.fileNotFound(res);
       }
     });
   }

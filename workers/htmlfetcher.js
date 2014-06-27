@@ -1,5 +1,4 @@
-// eventually, you'll have some code here that uses the code in `archive-helpers.js`
-// to actually download the urls you want to download.
+// Scrapes the url and downloads the data into a file directory.
 var http = require('http');
 var fs = require('fs');
 var archive = require('../helpers/archive-helpers.js');
@@ -10,6 +9,7 @@ var fetchHTML = function(url) {
     port: 80,
   };
 
+  // Gets the html data and writes to a new file.
   http.get(options, function(res){
     var body = '';
     res.on('data', function(chunk) {
