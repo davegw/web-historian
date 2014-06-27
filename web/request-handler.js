@@ -1,6 +1,7 @@
 var path = require('path');
 var archive = require('../helpers/archive-helpers');
 var httpHelpers = require('./http-helpers.js');
+var fetchHelper = require('../workers/htmlfetcher.js');
 
 var dirRoot = '/Users/student/Code/daviddavid/2014-06-web-historian/web/public';
 

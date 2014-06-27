@@ -1,5 +1,6 @@
 var fs = require('fs');
 var path = require('path');
+var fetchHelper = require('../workers/htmlfetcher');
 var _ = require('underscore');
 
 /*
@@ -66,9 +67,20 @@ exports.addUrlToList = function(writeUrl, callback){
 exports.isUrlArchived = function(archiveUrl, callback){
   // Check if URL is Archived.
   fs.open((exports.paths.archivedSites + '/' + archiveUrl), 'r', function(err, fd) {
-    callback(!err);
+    callback(!err, archiveUrl);
   });
 };
 
 exports.downloadUrls = function(){
+  // Find list of sites that are in sites.txt but are not yet archived.
+  exports.readListOfUrls(function() {
+    var listUrls = Object.keys(sitesObj);
+    for (var i = 0; i < listUrls.length; i++) {
+      exports.isUrlArchived(listUrls[i], function(success, url) {
+        if (!success) {
+          fetchHelper.fetchHTML(url);
+        }
+      });
+    }
+  });
 };
