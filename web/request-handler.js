@@ -26,29 +26,19 @@ exports.handleRequest = function (req, res) {
                 httpHelpers.serveAssets(res, dirRoot + '/loading.html');
               }
             });
-              // If it is serve the html.
-              //else
-                //Go to loading.
           }
+          // URL is not in the sites.txt list.
           else {
-            httpHelpers.serveAssets(res, dirRoot + '/loading.html');
+            archive.addUrlToList(postData, function(success){
+              if (success) {
+                httpHelpers.serveAssets(res, dirRoot + '/loading.html');
+              } else {
+                httpHelpers.serveAssets(res, dirRoot + '/loading.html');
+              }
+            });
           }
         };
         archive.isUrlInList(postData, isUrlInListCallback);
-
-        // else {
-        //   console.log('sadness');
-        // }
-        // If url not in file
-          // Add url to file
-          // Show loading page/
-
-        // archive.readListOfUrls(function(test) {
-        //   console.log(test);
-          // var buf = new Buffer(test, 'hex');
-          // console.log(buf.toString('utf8'));
-        // });
-
       });
     }
   } else if (req.url === '/styles.css') {

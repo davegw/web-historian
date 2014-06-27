@@ -27,7 +27,6 @@ exports.initialize = function(pathsObj){
 // The following function names are provided to you to suggest how you might
 // modularize your code. Keep it clean!
 exports.readListOfUrls = function(callback){
-  // callback = readListOfUrlsCallback
   // if urlList is empty or if sites.txt has changed since last load, then re-load
 
   // Check if sitesObj is empty and populate from file.
@@ -47,28 +46,27 @@ exports.readListOfUrls = function(callback){
 };
 
 exports.isUrlInList = function(searchUrl, handleRequestCallback){
-  // searchUrl = 'google.com', handleCallback = defined in requestsHandler
   // Read sites file
-  var readListOfUrlsCallback = function() {
+  exports.readListOfUrls(function() {
     var wasFound = (sitesObj[searchUrl] === true);
     handleRequestCallback(wasFound);
-  };
-  exports.readListOfUrls(readListOfUrlsCallback);
+  });
 };
 
-exports.addUrlToList = function(){
+exports.addUrlToList = function(writeUrl, callback){
   // Adjust sites.txt AND sitesObj
+  fs.appendFile(exports.paths.list, (writeUrl + '\n'), {encoding: 'utf8'}, function(err){
+    if (!err) {
+      sitesObj[writeUrl] = true;
+    }
+    callback(!err);
+  });
 };
 
 exports.isUrlArchived = function(archiveUrl, callback){
   // Check if URL is Archived.
   fs.open((exports.paths.archivedSites + '/' + archiveUrl), 'r', function(err, fd) {
-    if (err) {
-      callback(false);
-    }
-    else {
-      callback(true);
-    }
+    callback(!err);
   });
 };
 
