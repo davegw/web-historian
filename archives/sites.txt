@@ -3,3 +3,8 @@ www.testingstuff.com
 www.cnn.com
 abc.go.com
 yahoo.com
+twitter.com
+www.davegw.com
+www.davidgw.com
+www.fifa.com
+www.ask.com
