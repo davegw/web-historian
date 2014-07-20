@@ -35,7 +35,7 @@ var readFileAssets = function(res, asset, resHeader, resCode) {
     // Checks for css assets.
     if (path.extname(asset) === '.css') {
       res.writeHead(200, {'Content-Type': "text/css"});
-      res.end();
+      res.end(data);
       return;
     }
     res.writeHead(resCode, resHeader);
