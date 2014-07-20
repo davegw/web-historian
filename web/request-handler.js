@@ -31,6 +31,7 @@ exports.handleRequest = function (req, res) {
             archive.addUrlToList(postData, function(success){
               if (success) {
                 redirectToLoading(res);
+                archive.downloadUrls();
               } else {
                 redirectToLoading(res);
               }
