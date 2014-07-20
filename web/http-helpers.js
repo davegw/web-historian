@@ -51,6 +51,7 @@ var collectData = function(req, callback) {
   });
   req.on('end', function() {
     data = data.split('url=')[1];
+    data = data.replace(/^http%3A%2F%2F/, "");
     callback(data);
   });
 };
